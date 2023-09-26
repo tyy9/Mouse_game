@@ -9,6 +9,8 @@ int menu()
     int count = 1;
     //随机生成一个奶酪
     cheese.CheeseCreate();
+    Mouse *mouse1=new Mouse();
+    head.MouseTailAdd(mouse1);
     //创建鼠群自动移动线程
     if(pthread_create(&Mouse_autoMoveThread,NULL,Mouse_autoMove,&head)==-1){
         cout<<"创建线程失败\n";

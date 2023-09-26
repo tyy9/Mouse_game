@@ -12,7 +12,6 @@ using namespace std;
 
 extern Cheese cheese;
 
- void *Mouse_autoMove(void *args);//老鼠自动行走
 //------------------------------
 //------------------------------
 class Mouse
@@ -42,4 +41,7 @@ public:
     ~Mouse();
 };
 
+ void *Mouse_autoMove(void *args);//老鼠自动行走
+ void *adjustMove(Mouse *head,int x,int y);//调整在移动时各节点的   
+ void *cleanMouse(Mouse *head);//老鼠在移动前的清除函数
 #endif
