@@ -10,28 +10,14 @@ void Button_Direct(int x, int y, Mouse &head)
         {
             sign = "up";
             cout<<sign<<endl;
-            // try
-            // {
-            //     head + sign;
-            // }
-            // catch (exception &e)
-            // {
-            //     e.what();
-            // }
+
             head.show();
         }
         if (y > 385 && y <= 435)
         {
             sign = "below";
             cout<<sign<<endl;
-            // try
-            // {
-            //     head + sign;
-            // }
-            // catch (exception &e)
-            // {
-            //     e.what();
-            // }
+  
             head.show();
         }
     }
@@ -42,14 +28,7 @@ void Button_Direct(int x, int y, Mouse &head)
         {
             sign = "left";
             cout<<sign<<endl;
-            // try
-            // {
-            //     head + sign;
-            // }
-            // catch (exception &e)
-            // {
-            //     e.what();
-            // }
+
             head.show();
         }
     }
@@ -60,14 +39,7 @@ void Button_Direct(int x, int y, Mouse &head)
         {
             sign = "right";
             cout<<sign<<endl;
-            // try
-            // {
-            //     head + sign;
-            // }
-            // catch (exception &e)
-            // {
-            //     e.what();
-            // }
+
             head.show();
         }
     }

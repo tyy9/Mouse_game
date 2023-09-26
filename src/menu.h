@@ -7,5 +7,6 @@
 #include"menu_func.h"
 #include<pthread.h>
 extern Mouse head;
+extern Cheese cheese;
 int menu();
 #endif

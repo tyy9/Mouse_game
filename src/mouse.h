@@ -2,9 +2,15 @@
 #define _MOUSE_H_
 #include <iostream>
 #include "Custom_Exception.h"
+#include"cheese.h"
 #include "lcd_jpeg.h"
 #include<memory>
+#include<vector>
+#include<memory>
 using namespace std;
+
+
+extern Cheese cheese;
 
  void *Mouse_autoMove(void *args);//老鼠自动行走
 //------------------------------
@@ -22,7 +28,7 @@ private:
     Mouse *prev; // 上一个老鼠
 public:
     Mouse(/* args */ int x = 50, int y = 45);
-    void MouseTailAdd(Mouse &other_mouse);
+    void MouseTailAdd(Mouse *other);
     void operator+(string sign);
     void show();
     void setX(int x);

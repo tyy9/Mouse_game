@@ -4,7 +4,7 @@ int MouseCount;        // 鼠群的数量
 int CheeseCount;       // 奶酪的数量
 Mouse head(50, 125);   // 鼠头
 string sign = "below"; // 指令
-
+vector<Mouse *>mouse_v;
 Mouse::Mouse(/* args */ int x, int y) : x(x), y(y)
 {
     next = prev = this;
@@ -53,10 +53,10 @@ void Mouse::setPrev(Mouse *prev)
 }
 //----------------------------
 
-void Mouse::MouseTailAdd(Mouse &other_mouse)
+void Mouse::MouseTailAdd(Mouse *other)
 {
     // 先判断鼠头此时的朝向为？
-    Mouse *other = &other_mouse;
+    // Mouse *other = &other_mouse;
     // other->show();
     if (sign.compare("up") == 0)
     {
@@ -68,7 +68,7 @@ void Mouse::MouseTailAdd(Mouse &other_mouse)
         other->setNext(this);
         this->setPrev(other);
         other->setX(tail->getX());
-        other->setY(tail->getY() +20);
+        other->setY(tail->getY() + 20);
         this->getNext()->show();
     }
     else if (sign.compare("below") == 0)
@@ -93,7 +93,7 @@ void Mouse::MouseTailAdd(Mouse &other_mouse)
         other->setPrev(tail);
         other->setNext(this);
         this->setPrev(other);
-        other->setX(tail->getX()+20);
+        other->setX(tail->getX() + 25);
         other->setY(tail->getY());
         this->getNext()->show();
     }
@@ -106,7 +106,7 @@ void Mouse::MouseTailAdd(Mouse &other_mouse)
         other->setPrev(tail);
         other->setNext(this);
         this->setPrev(other);
-        other->setX(tail->getX()-20);
+        other->setX(tail->getX() - 25);
         other->setY(tail->getY());
         this->getNext()->show();
     }
@@ -191,6 +191,17 @@ void *Mouse_autoMove(void *args)
                 }
                 // 显示头
                 lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_u.jpg");
+
+                //判断是否吃到奶酪
+                if (head->getX() == cheese.getX() && head->getY() == cheese.getY())
+                {
+                    cout << "create" << endl;
+                    cheese.setExsit(0);
+                    cheese.CheeseCreate();
+                    Mouse *p=new Mouse();
+                    mouse_v.push_back(p);
+                    head->MouseTailAdd(p);
+                }
             }
         }
         else if (sign.compare("below") == 0)
@@ -198,7 +209,7 @@ void *Mouse_autoMove(void *args)
 
             // 先刷白，再显示图片
             // 刷白头部
-            for (int re_y = head->getY(); re_y < head->getY()+20 ; re_y++)
+            for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
             {
                 for (int re_x = head->getX(); re_x < head->getX() + 25; re_x++)
                 {
@@ -209,7 +220,7 @@ void *Mouse_autoMove(void *args)
             // 刷白尾部
             while (p != head)
             {
-                for (int re_y = p->getY(); re_y < p->getY()+20; re_y++)
+                for (int re_y = p->getY(); re_y < p->getY() + 20; re_y++)
                 {
                     for (int re_x = p->getX(); re_x < p->getX() + 25; re_x++)
                     {
@@ -240,7 +251,7 @@ void *Mouse_autoMove(void *args)
                 p = prev;
                 while (p != head)
                 {
-                    p->show();
+                   // p->show();
                     // 如果就一个尾部对象则上一个节点的值就是头部未修改前的值
                     if (p->getPrev() == head)
                     {
@@ -259,6 +270,17 @@ void *Mouse_autoMove(void *args)
                 }
                 // 显示头
                 lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_b.jpg");
+
+                //判断是否吃到奶酪
+                if (head->getX() == cheese.getX() && head->getY() == cheese.getY())
+                {
+                    cout << "create" << endl;
+                    cheese.setExsit(0);
+                    cheese.CheeseCreate();
+                    sleep(1);
+                    Mouse *p=new Mouse();
+                    head->MouseTailAdd(p);
+                }
             }
         }
         else if (sign.compare("left") == 0)
@@ -307,7 +329,7 @@ void *Mouse_autoMove(void *args)
                 p = prev;
                 while (p != head)
                 {
-                    p->show();
+                   // p->show();
                     // 如果就一个尾部对象则上一个节点的值就是头部未修改前的值
                     if (p->getPrev() == head)
                     {
@@ -326,6 +348,17 @@ void *Mouse_autoMove(void *args)
                 }
                 // 显示头
                 lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_l.jpg");
+
+                //判断是否吃到奶酪
+                if (head->getX() == cheese.getX() && head->getY() == cheese.getY())
+                {
+                    cout << "create" << endl;
+                    cheese.setExsit(0);
+                    cheese.CheeseCreate();
+
+                    Mouse *p=new Mouse();
+                    head->MouseTailAdd(p);
+                }
             }
         }
         else if (sign.compare("right") == 0)
@@ -334,7 +367,7 @@ void *Mouse_autoMove(void *args)
             // 刷白头部
             for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
             {
-                for (int re_x = head->getX(); re_x < head->getX()+25; re_x++)
+                for (int re_x = head->getX(); re_x < head->getX() + 25; re_x++)
                 {
                     lcd_draw_point(re_x, re_y, 0x00FFFFFF);
                 }
@@ -374,7 +407,7 @@ void *Mouse_autoMove(void *args)
                 p = prev;
                 while (p != head)
                 {
-                    p->show();
+                    //p->show();
                     // 如果就一个尾部对象则上一个节点的值就是头部未修改前的值
                     if (p->getPrev() == head)
                     {
@@ -393,8 +426,20 @@ void *Mouse_autoMove(void *args)
                 }
                 // 显示头
                 lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_r.jpg");
+
+                //判断是否吃到奶酪
+                if (head->getX() == cheese.getX() && head->getY() == cheese.getY())
+                {
+                    cout << "create" << endl;
+                    cheese.setExsit(0);
+                    cheese.CheeseCreate();
+                    sleep(1);
+                    Mouse *p=new Mouse();
+                    head->MouseTailAdd(p);
+                }
             }
         }
+
         usleep(500 * 1000);
     }
 #endif
