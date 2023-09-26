@@ -3,9 +3,15 @@ int x, y;
 pthread_t Mouse_autoMoveThread;
 int menu()
 {
-    lcd_draw_img_jpeg(0, 0, "menu.jpg");
+    lcd_draw_img_jpeg(0, 0, "./img_resource/menu.jpg");
     struct input_event buf; // 触摸屏数据结构体
     int count = 1;
+     Mouse mouse1;
+    Mouse mouse2;
+    Mouse mouse3;
+     head.MouseTailAdd(mouse1);
+    head.MouseTailAdd(mouse2);
+    head.MouseTailAdd(mouse3);
     //创建鼠群自动移动线程
     if(pthread_create(&Mouse_autoMoveThread,NULL,Mouse_autoMove,&head)==-1){
         cout<<"创建线程失败\n";

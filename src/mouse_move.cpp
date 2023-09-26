@@ -2,12 +2,12 @@
 // 全局变量
 int MouseCount;        // 鼠群的数量
 int CheeseCount;       // 奶酪的数量
-Mouse head;            // 鼠头
+Mouse head(50, 125);   // 鼠头
 string sign = "below"; // 指令
 
 Mouse::Mouse(/* args */ int x, int y) : x(x), y(y)
 {
-    next = prev = NULL;
+    next = prev = this;
     cout << "mouse构建" << endl;
 }
 
@@ -17,7 +17,7 @@ Mouse::~Mouse()
 }
 void Mouse::show()
 {
-    cout << "x:" << x << "\ty:" << y << endl;
+    cout << this << "\tx:" << x << "\ty:" << y << endl;
 }
 void Mouse::setX(int x)
 {
@@ -43,139 +43,72 @@ Mouse *Mouse ::getPrev()
 {
     return prev;
 }
-
-//----------------------------
-void Mouse::operator+(string sign)
+void Mouse::setNext(Mouse *next)
 {
-    // 判断移动方向
+    this->next = next;
+}
+void Mouse::setPrev(Mouse *prev)
+{
+    this->prev = prev;
+}
+//----------------------------
+
+void Mouse::MouseTailAdd(Mouse &other_mouse)
+{
+    // 先判断鼠头此时的朝向为？
+    Mouse *other = &other_mouse;
+    // other->show();
     if (sign.compare("up") == 0)
     {
-        y -= 20;
-        if (y <= 45)
-        {
-            // 先将之前的内容刷白
-            for (int re_y = y + 20; re_y < y + 20 * 2; re_y++)
-            {
-                for (int re_x = x; re_x < x + 25; re_x++)
-                {
-                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                }
-            }
-            lcd_draw_img_jpeg(x, y, "mouse_u.jpg");
-            throw MouseOutRange();
-        }
-        else
-        {
-            if (next == NULL)
-            {
-                // 先将之前的内容刷白
-                for (int re_y = y + 20; re_y < y + 20 * 2; re_y++)
-                {
-                    for (int re_x = x; re_x < x + 25; re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                lcd_draw_img_jpeg(x, y, "mouse_u.jpg");
-            }
-        }
+        // 找到尾部
+        Mouse *p = this, *tail = NULL;
+        tail = p->getPrev();
+        tail->setNext(other);
+        other->setPrev(tail);
+        other->setNext(this);
+        this->setPrev(other);
+        other->setX(tail->getX());
+        other->setY(tail->getY() +20);
+        this->getNext()->show();
     }
     else if (sign.compare("below") == 0)
     {
-        y += 20;
-        cout << "y---" << y << endl;
-        if (y >= 445)
-        {
-            // 先将之前的内容刷白
-            for (int re_y = y - 20; re_y < y; re_y++)
-            {
-                for (int re_x = x; re_x <= x + 25; re_x++)
-                {
-                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                }
-            }
-            lcd_draw_img_jpeg(x, y, "mouse_b.jpg");
-            throw MouseOutRange();
-        }
-        else
-        {
-            if (next == NULL)
-            {
-                // 先将之前的内容刷白
-                for (int re_y = y - 20; re_y < y; re_y++)
-                {
-                    for (int re_x = x; re_x <= x + 25; re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                lcd_draw_img_jpeg(x, y, "mouse_b.jpg");
-            }
-        }
+        // 找到尾部
+        Mouse *p = this, *tail = NULL;
+        tail = p->getPrev();
+        tail->setNext(other);
+        other->setPrev(tail);
+        other->setNext(this);
+        this->setPrev(other);
+        other->setX(tail->getX());
+        other->setY(tail->getY() - 20);
+        this->getNext()->show();
     }
     else if (sign.compare("left") == 0)
     {
-        x -= 25;
-        if (x <= 50)
-        {
-            // 先将之前的内容刷白
-            for (int re_y = y; re_y < y + 20; re_y++)
-            {
-                for (int re_x = x + 25; re_x < x + 25 * 2; re_x++)
-                {
-                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                }
-            }
-            lcd_draw_img_jpeg(x, y, "mouse_l.jpg");
-            throw MouseOutRange();
-        }
-        else
-        {
-            if (next == NULL)
-            {
-                // 先将之前的内容刷白
-                for (int re_y = y; re_y < y + 20; re_y++)
-                {
-                    for (int re_x = x + 25; re_x < x + 25 * 2; re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                lcd_draw_img_jpeg(x, y, "mouse_l.jpg");
-            }
-        }
+        // 找到尾部
+        Mouse *p = this, *tail = NULL;
+        tail = p->getPrev();
+        tail->setNext(other);
+        other->setPrev(tail);
+        other->setNext(this);
+        this->setPrev(other);
+        other->setX(tail->getX()+20);
+        other->setY(tail->getY());
+        this->getNext()->show();
     }
     else if (sign.compare("right") == 0)
     {
-        x += 25;
-        if (x >= 550)
-        {
-            // 先将之前的内容刷白
-            for (int re_y = y; re_y < y + 20; re_y++)
-            {
-                for (int re_x = x - 25; re_x < x; re_x++)
-                {
-                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                }
-            }
-            lcd_draw_img_jpeg(x, y, "mouse_r.jpg");
-            throw MouseOutRange();
-        }
-        else
-        {
-            if (next == NULL)
-            {
-                // 先将之前的内容刷白
-                for (int re_y = y; re_y < y + 20; re_y++)
-                {
-                    for (int re_x = x - 25; re_x < x; re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                lcd_draw_img_jpeg(x, y, "mouse_r.jpg");
-            }
-        }
+        // 找到尾部
+        Mouse *p = this, *tail = NULL;
+        tail = p->getPrev();
+        tail->setNext(other);
+        other->setPrev(tail);
+        other->setNext(this);
+        this->setPrev(other);
+        other->setX(tail->getX()-20);
+        other->setY(tail->getY());
+        this->getNext()->show();
     }
 }
 
@@ -194,11 +127,34 @@ void *Mouse_autoMove(void *args)
         // 判断移动方向
         if (sign.compare("up") == 0)
         {
+            // 先刷白，再显示图片
+            // 刷白头部
+            for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
+            {
+                for (int re_x = head->getX(); re_x < head->getX() + 25; re_x++)
+                {
+                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                }
+            }
+            Mouse *p = next;
+            // 刷白尾部
+            while (p != head)
+            {
+                for (int re_y = p->getY(); re_y < p->getY() + 20; re_y++)
+                {
+                    for (int re_x = p->getX(); re_x < p->getX() + 25; re_x++)
+                    {
+                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                    }
+                }
+                p = p->getNext();
+            }
+
             head->setY(y - 20);
-            cout << "mouse---y:" << head->getY() << endl;
+
             if (head->getY() < 45)
             {
-                
+
                 // 先将之前的内容刷白
                 for (int re_y = head->getY() + 20; re_y < head->getY() + 20 * 2; re_y++)
                 {
@@ -207,27 +163,62 @@ void *Mouse_autoMove(void *args)
                         lcd_draw_point(re_x, re_y, 0x00FFFFFF);
                     }
                 }
-                //lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_u.jpg");
+                // lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_u.jpg");
                 throw MouseOutRange();
             }
             else
             {
-                if (next == NULL)
+                // 头部尾部有对象
+                p = prev;
+                while (p != head)
                 {
-                    // 先将之前的内容刷白
-                    for (int re_y = head->getY() + 20; re_y < head->getY() + 20 * 2; re_y++)
+                    p->show();
+                    // 如果就一个尾部对象则上一个节点的值就是头部未修改前的值
+                    if (p->getPrev() == head)
                     {
-                        for (int re_x = head->getX(); re_x < head->getX() + 25; re_x++)
-                        {
-                            lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                        }
+                        p->setX(x);
+                        p->setY(y);
                     }
-                    lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_u.jpg");
+                    // 下一个获取上一个节点的值
+                    else
+                    {
+                        p->setX(p->getPrev()->getX());
+                        p->setY(p->getPrev()->getY());
+                    }
+
+                    lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_u.jpg");
+                    p = p->getPrev();
                 }
+                // 显示头
+                lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_u.jpg");
             }
         }
         else if (sign.compare("below") == 0)
         {
+
+            // 先刷白，再显示图片
+            // 刷白头部
+            for (int re_y = head->getY(); re_y < head->getY()+20 ; re_y++)
+            {
+                for (int re_x = head->getX(); re_x < head->getX() + 25; re_x++)
+                {
+                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                }
+            }
+            Mouse *p = next;
+            // 刷白尾部
+            while (p != head)
+            {
+                for (int re_y = p->getY(); re_y < p->getY()+20; re_y++)
+                {
+                    for (int re_x = p->getX(); re_x < p->getX() + 25; re_x++)
+                    {
+                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                    }
+                }
+                p = p->getNext();
+            }
+
             head->setY(y + 20);
 
             if (head->getY() > 445)
@@ -240,29 +231,61 @@ void *Mouse_autoMove(void *args)
                         lcd_draw_point(re_x, re_y, 0x00FFFFFF);
                     }
                 }
-                lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_b.jpg");
-                //throw MouseOutRange();
+                lcd_draw_img_jpeg(head->getX(), head->getY(), "./img_resource/mouse_head_b.jpg");
+                // throw MouseOutRange();
             }
             else
             {
-                if (next == NULL)
+                // 头部尾部有对象
+                p = prev;
+                while (p != head)
                 {
-                    //cout << "y---" << y << endl;
-                    // 先将之前的内容刷白
-                    for (int re_y = head->getY() - 20; re_y < head->getY(); re_y++)
+                    p->show();
+                    // 如果就一个尾部对象则上一个节点的值就是头部未修改前的值
+                    if (p->getPrev() == head)
                     {
-                        for (int re_x = head->getX(); re_x <= head->getX() + 25; re_x++)
-                        {
-                            //cout << "re_y:" << re_y << "\tre:" << re_x << endl;
-                            lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                        }
+                        p->setX(x);
+                        p->setY(y);
                     }
-                    lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_b.jpg");
+                    // 下一个获取上一个节点的值
+                    else
+                    {
+                        p->setX(p->getPrev()->getX());
+                        p->setY(p->getPrev()->getY());
+                    }
+
+                    lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_b.jpg");
+                    p = p->getPrev();
                 }
+                // 显示头
+                lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_b.jpg");
             }
         }
         else if (sign.compare("left") == 0)
         {
+            // 先刷白，再显示图片
+            // 刷白头部
+            for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
+            {
+                for (int re_x = head->getX(); re_x < head->getX() + 25; re_x++)
+                {
+                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                }
+            }
+            Mouse *p = next;
+            // 刷白尾部
+            while (p != head)
+            {
+                for (int re_y = p->getY(); re_y < p->getY() + 20; re_y++)
+                {
+                    for (int re_x = p->getX(); re_x < p->getX() + 25; re_x++)
+                    {
+                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                    }
+                }
+                p = p->getNext();
+            }
+
             head->setX(x - 25);
             if (head->getX() < 50)
             {
@@ -274,27 +297,62 @@ void *Mouse_autoMove(void *args)
                         lcd_draw_point(re_x, re_y, 0x00FFFFFF);
                     }
                 }
-                //lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_l.jpg");
+                // lcd_draw_img_jpeg(head->getX(), head->getY(), "./img_resource/mouse_l.jpg");
                 throw MouseOutRange();
             }
             else
             {
-                if (next == NULL)
+
+                // 头部尾部有对象
+                p = prev;
+                while (p != head)
                 {
-                    // 先将之前的内容刷白
-                    for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
+                    p->show();
+                    // 如果就一个尾部对象则上一个节点的值就是头部未修改前的值
+                    if (p->getPrev() == head)
                     {
-                        for (int re_x = head->getX() + 25; re_x < head->getX() + 25 * 2; re_x++)
-                        {
-                            lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                        }
+                        p->setX(x);
+                        p->setY(y);
                     }
-                    lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_l.jpg");
+                    // 下一个获取上一个节点的值
+                    else
+                    {
+                        p->setX(p->getPrev()->getX());
+                        p->setY(p->getPrev()->getY());
+                    }
+
+                    lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_l.jpg");
+                    p = p->getPrev();
                 }
+                // 显示头
+                lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_l.jpg");
             }
         }
         else if (sign.compare("right") == 0)
         {
+            // 先刷白，再显示图片
+            // 刷白头部
+            for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
+            {
+                for (int re_x = head->getX(); re_x < head->getX()+25; re_x++)
+                {
+                    lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                }
+            }
+            Mouse *p = next;
+            // 刷白尾部
+            while (p != head)
+            {
+                for (int re_y = p->getY(); re_y < p->getY() + 20; re_y++)
+                {
+                    for (int re_x = p->getX(); re_x < p->getX() + 25; re_x++)
+                    {
+                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
+                    }
+                }
+                p = p->getNext();
+            }
+
             head->setX(x + 25);
             if (head->getX() > 550)
             {
@@ -306,33 +364,38 @@ void *Mouse_autoMove(void *args)
                         lcd_draw_point(re_x, re_y, 0x00FFFFFF);
                     }
                 }
-                //lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_r.jpg");
+                // lcd_draw_img_jpeg(head->getX(), head->getY(), "./img_resource/mouse_r.jpg");
                 throw MouseOutRange();
             }
             else
             {
-                if (next == NULL)
+
+                // 头部尾部有对象
+                p = prev;
+                while (p != head)
                 {
-                    // 先将之前的内容刷白
-                    for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
+                    p->show();
+                    // 如果就一个尾部对象则上一个节点的值就是头部未修改前的值
+                    if (p->getPrev() == head)
                     {
-                        for (int re_x = head->getX() - 25; re_x < head->getX(); re_x++)
-                        {
-                            lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                        }
+                        p->setX(x);
+                        p->setY(y);
                     }
-                    lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_r.jpg");
+                    // 下一个获取上一个节点的值
+                    else
+                    {
+                        p->setX(p->getPrev()->getX());
+                        p->setY(p->getPrev()->getY());
+                    }
+
+                    lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_r.jpg");
+                    p = p->getPrev();
                 }
+                // 显示头
+                lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_head_r.jpg");
             }
         }
-        usleep(500*1000);
-    }
-#endif
-#if 0
-    for(int y=0;y<200;y++){
-        for(int x=0;x<100;x++){
-            lcd_draw_point(x,y,0x00000000);
-        }
+        usleep(500 * 1000);
     }
 #endif
 }

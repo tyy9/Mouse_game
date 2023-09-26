@@ -22,7 +22,7 @@ private:
     Mouse *prev; // 上一个老鼠
 public:
     Mouse(/* args */ int x = 50, int y = 45);
-    void MouseAdd(Mouse &other_mouse);
+    void MouseTailAdd(Mouse &other_mouse);
     void operator+(string sign);
     void show();
     void setX(int x);
@@ -30,7 +30,9 @@ public:
     int getX();
     int getY();
     Mouse *getNext();
+    void setNext(Mouse *next);
     Mouse *getPrev();
+    void setPrev(Mouse *prev);
     ~Mouse();
 };
 
