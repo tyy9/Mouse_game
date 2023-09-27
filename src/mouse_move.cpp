@@ -3,7 +3,7 @@
 int MouseCount;        // 鼠群的数量
 int CheeseCount;       // 奶酪的数量
 Mouse head;            // 鼠头
-string sign = "below"; // 指令
+string sign; // 指令
 vector<Mouse *> mouse_v;
 int GameOverFlag; // 游戏结束标志
 pthread_cond_t Over_cond;

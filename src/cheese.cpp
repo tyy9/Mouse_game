@@ -57,17 +57,20 @@ void Cheese::CheeseCreate()
             }
         }
     }
-        cout << "生成奶酪" << endl;
-        int r_x, r_y, r_bouns;
-         srand((unsigned)time(NULL));
-        r_x = 75 + (rand() % (18)) * 25; //[75,525)
-        r_y = 65 + (rand() % (18)) * 20; //[65，425)
-        r_bouns = rand() % (1 - 0) + 0;
-        cout << "cheese--"
-             << "x:" << r_x << "\ty:" << r_y << endl;
-        x = r_x;
-        y = r_y;
-        bonus = r_bouns;
-        lcd_draw_img_jpeg(x, y, "./img_resource/cheese.jpg");
-    
-}   
+    cout << "生成奶酪" << endl;
+    int r_x = 0, r_y = 0, r_bouns;
+    srand((unsigned)time(NULL));
+    // 奶酪的生成方向必须与鼠头方向相反，且生成在鼠头上或下
+
+    r_x = 75 + (rand() % (18)) * 25;
+
+    r_y = 65 + (rand() % (18)) * 20; //[65，425)
+
+    r_bouns = rand() % (1 - 0) + 0;
+    cout << "cheese--"
+         << "x:" << r_x << "\ty:" << r_y << endl;
+    x = r_x;
+    y = r_y;
+    bonus = r_bouns;
+    lcd_draw_img_jpeg(x, y, "./img_resource/cheese.jpg");
+}

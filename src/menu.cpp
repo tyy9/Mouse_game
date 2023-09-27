@@ -7,6 +7,7 @@ int menu()
     lcd_draw_img_jpeg(0, 0, "./img_resource/menu.jpg");
     struct input_event buf; // 触摸屏数据结构体
     int count = 1;
+    sign="below";
     //随机生成一个奶酪
     cheese.CheeseCreate();
     //初始化条件变量，互斥锁等
