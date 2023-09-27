@@ -4,9 +4,10 @@ MAIN_Src=bin/main.cpp
 Include=-I./include
 Lib=-L./lib
 Lib_Object= -ljpeg -lpthread
+Std=-std=c++11
 CC=arm-linux-g++
 $(Target):$(Src) $(MAIN_Src) 
-	$(CC) $(Src) $(MAIN_Src) -o $(Target) $(Include) $(Lib) $(Lib_Object)
+	$(CC) $(Src) $(MAIN_Src) -o $(Target) $(Include) $(Lib) $(Lib_Object) $(Std)
 	
 .PHONY:scp
 scp:

@@ -28,6 +28,7 @@ private:
 public:
     Mouse(/* args */ int x = 50, int y = 45);
     void MouseTailAdd(Mouse *other);
+    void MouseReset();//数据重置
     void operator+(string sign);
     void show();
     void setX(int x);
@@ -42,6 +43,7 @@ public:
 };
 
  void *Mouse_autoMove(void *args);//老鼠自动行走
- void *adjustMove(Mouse *head,int x,int y);//调整在移动时各节点的   
- void *cleanMouse(Mouse *head);//老鼠在移动前的清除函数
+ void adjustMove(Mouse *head,int x,int y);//调整在移动时各节点的   
+ void cleanMouse(Mouse *head);//老鼠在移动前的清除函数
+ void GameOver(Mouse *head);//老鼠在撞墙后的处理函数
 #endif

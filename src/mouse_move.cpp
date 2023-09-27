@@ -2,9 +2,15 @@
 // 全局变量
 int MouseCount;        // 鼠群的数量
 int CheeseCount;       // 奶酪的数量
-Mouse head(50, 125);   // 鼠头
+Mouse head;            // 鼠头
 string sign = "below"; // 指令
 vector<Mouse *> mouse_v;
+int GameOverFlag; // 游戏结束标志
+pthread_cond_t Over_cond;
+pthread_mutex_t Over_mutex;
+int ResetFlag;   // 重置标志
+int DestroyFlag; // 销毁标志
+
 Mouse::Mouse(/* args */ int x, int y) : x(x), y(y)
 {
     next = prev = this;
@@ -52,6 +58,19 @@ void Mouse::setPrev(Mouse *prev)
     this->prev = prev;
 }
 //----------------------------
+
+void Mouse::MouseReset()
+{
+    for (Mouse *m : mouse_v)
+    {
+        delete m;
+        mouse_v.clear();
+    }
+    x = 50;
+    y = 45;
+    next = prev = this;
+    sign = "below";
+}
 
 void Mouse::MouseTailAdd(Mouse *other)
 {
@@ -111,8 +130,25 @@ void Mouse::MouseTailAdd(Mouse *other)
         this->getNext()->show();
     }
 }
+void GameOver(Mouse *head)
+{
+    GameOverFlag = 1;
+    lcd_draw_img_jpeg(200, 150, "./img_resource/game_over.jpg");
+    cout << "撞墙啦" << endl;
+    pthread_cond_wait(&Over_cond, &Over_mutex);
+    if (ResetFlag)
+    {
+        // 重新生成奶酪
+        cheese.setExsit(0);
+        cheese.CheeseCreate();
+        ResetFlag=0;
+        GameOverFlag=0;
+    }else if(DestroyFlag){
 
-void *cleanMouse(Mouse *head)
+    }
+
+} // 老鼠在撞墙后的处理函数
+void cleanMouse(Mouse *head)
 {
     Mouse *next = head->getNext();
     // 先刷白，再显示图片
@@ -140,12 +176,12 @@ void *cleanMouse(Mouse *head)
     }
 
 } // 老鼠在移动前的清除函数
-void *adjustMove(Mouse *head, int x, int y)
+void adjustMove(Mouse *head, int x, int y)
 {
     Mouse *next = head->getNext();
     Mouse *prev = head->getPrev();
     Mouse *p = prev;
-    cout<<"next:"<<endl;
+    cout << "next:" << endl;
     p->show();
     // 头部尾部有对象
     while (p != head)
@@ -170,7 +206,7 @@ void *adjustMove(Mouse *head, int x, int y)
         }
         else if (sign.compare("below") == 0)
         {
-            cout<<"1"<<endl;
+            cout << "1" << endl;
             lcd_draw_img_jpeg(p->getX(), p->getY(), "./img_resource/mouse_b.jpg");
         }
         else if (sign.compare("left") == 0)
@@ -233,17 +269,7 @@ void *Mouse_autoMove(void *args)
 
             if (head->getY() < 45)
             {
-
-                // 先将之前的内容刷白
-                for (int re_y = head->getY() + 20; re_y < head->getY() + 20 * 2; re_y++)
-                {
-                    for (int re_x = head->getX(); re_x < head->getX() + 25; re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                // lcd_draw_img_jpeg(head->getX(), head->getY(), "mouse_u.jpg");
-                throw MouseOutRange();
+                GameOver(head);
             }
             else
             {
@@ -255,18 +281,9 @@ void *Mouse_autoMove(void *args)
             cleanMouse(head);
             head->setY(y + 20);
 
-            if (head->getY() > 445)
+            if (head->getY() >= 445)
             {
-                // 先将之前的内容刷白
-                for (int re_y = head->getY() - 20; re_y < head->getY(); re_y++)
-                {
-                    for (int re_x = head->getX(); re_x <= head->getX() + 25; re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                lcd_draw_img_jpeg(head->getX(), head->getY(), "./img_resource/mouse_head_b.jpg");
-                // throw MouseOutRange();
+                GameOver(head);
             }
             else
             {
@@ -281,16 +298,7 @@ void *Mouse_autoMove(void *args)
             head->setX(x - 25);
             if (head->getX() < 50)
             {
-                // 先将之前的内容刷白
-                for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
-                {
-                    for (int re_x = head->getX() + 25; re_x < head->getX() + 25 * 2; re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                // lcd_draw_img_jpeg(head->getX(), head->getY(), "./img_resource/mouse_l.jpg");
-                throw MouseOutRange();
+                GameOver(head);
             }
             else
             {
@@ -304,23 +312,14 @@ void *Mouse_autoMove(void *args)
             Mouse *p = next;
 
             head->setX(x + 25);
-            if (head->getX() > 550)
+            if (head->getX() >= 550)
             {
-                // 先将之前的内容刷白
-                for (int re_y = head->getY(); re_y < head->getY() + 20; re_y++)
-                {
-                    for (int re_x = head->getX() - 25; re_x < head->getX(); re_x++)
-                    {
-                        lcd_draw_point(re_x, re_y, 0x00FFFFFF);
-                    }
-                }
-                // lcd_draw_img_jpeg(head->getX(), head->getY(), "./img_resource/mouse_r.jpg");
-                throw MouseOutRange();
+                GameOver(head);
             }
             else
             {
 
-                adjustMove(head,x,y);
+                adjustMove(head, x, y);
             }
         }
 
