@@ -20,13 +20,12 @@ private:
     /* data */
     int x;
     int y;
-    int near_flag_row;    // 同一行中是否还有mouse对象,如果有那么移动后，后面的内存不用刷白
-    int near_flag_column; // 同一列中是否还有mouse对象，如果有那么移动后，后面的内存不用刷白
+    int score;
     // 采用双向链表的形式链接
     Mouse *next; // 下一个老鼠
     Mouse *prev; // 上一个老鼠
 public:
-    Mouse(/* args */ int x = 50, int y = 45);
+    Mouse(/* args */ int x = 50, int y = 45,int score);
     void MouseTailAdd(Mouse *other);
     void MouseReset();//数据重置  
     void MouseDestroy();//数据销毁  

@@ -8,12 +8,14 @@ vector<Mouse *> mouse_v;
 int GameOverFlag; // 游戏结束标志
 pthread_cond_t Over_cond;
 pthread_mutex_t Over_mutex;
+pthread_cond_t Pause_cond;
+pthread_mutex_t Pause_mutex;
 int ResetFlag;   // 重置标志
 int DestroyFlag; // 销毁标志
 int speed;//速度
-
+int PauseFlag;//暂停
 //----------------------------
-Mouse::Mouse(/* args */ int x, int y) : x(x), y(y)
+Mouse::Mouse(/* args */ int x, int y,int score) : x(x), y(y),score(score)
 {
     next = prev = this;
     cout << "mouse构建" << endl;
@@ -71,6 +73,7 @@ void Mouse::MouseReset()
     }
     x = 50;
     y = 45;
+    score=0;
     next = prev = this;
     sign = "below";
 }
@@ -272,11 +275,15 @@ void *Mouse_autoMove(void *args)
 #if 1
     while (1)
     {
+
         int y = head->getY();
         int x = head->getX();
         Mouse *next = head->getNext();
         Mouse *prev = head->getPrev();
-
+        //判断是否处于暂停
+        if(PauseFlag){
+            pthread_cond_wait(&Pause_cond,&Pause_mutex);
+        }
         // 判断移动方向
         if (sign.compare("up") == 0)
         {
@@ -338,7 +345,9 @@ void *Mouse_autoMove(void *args)
                 adjustMove(head, x, y);
             }
         }
-
+        if(PauseFlag){
+            pthread_cond_wait(&Pause_cond,&Pause_mutex);
+        }
         usleep(speed * 1000);
     }
 #endif

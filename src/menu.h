@@ -12,5 +12,5 @@ extern string sign;
 extern pthread_cond_t Over_cond;
 extern pthread_mutex_t Over_mutex;
 int menu();
-void initdata();//初始化数据
+
 #endif
