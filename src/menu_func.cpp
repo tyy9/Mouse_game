@@ -30,6 +30,16 @@ void Button_Direct(int x, int y)
     // 左
     if (x > 605 && x <= 665)
     {
+         if (y > 335 && y <= 385){
+            //减速
+            speed+=100;
+            if(speed>1000){
+                speed=1000;
+            }
+            lcd_draw_img_jpeg(605, 335, "./img_resource/button_speed_de_active.jpg");
+            usleep(100*1000);
+            lcd_draw_img_jpeg(605, 335, "./img_resource/button_speed_de.jpg");
+         }
         if (y > 385 && y <= 435)
         {
             sign = "left";
@@ -44,6 +54,16 @@ void Button_Direct(int x, int y)
     // 右
     if (x > 725 && x <= 785)
     {
+        if (y > 335 && y <= 385){
+            //加速
+            speed-=100;
+            if(speed<300){
+                speed=300;
+            }
+            lcd_draw_img_jpeg(725, 335, "./img_resource/button_speed_add_active.jpg");
+            usleep(100*1000);
+            lcd_draw_img_jpeg(725, 335, "./img_resource/button_speed_add.jpg");
+         }
         if (y > 385 && y <= 435)
         {
             sign = "right";
@@ -55,11 +75,12 @@ void Button_Direct(int x, int y)
             head.show();
         }
     }
+
 }
 
-void EndMenu(int x, int y)
+int EndMenu(int x, int y)
 {
-    cout<<"GameOverFlag:"<<GameOverFlag<<endl;
+    cout << "GameOverFlag:" << GameOverFlag << endl;
     if (GameOverFlag)
     {
         if (x > 250 && x <= 350)
@@ -67,13 +88,29 @@ void EndMenu(int x, int y)
             if (y > 235 && y <= 285)
             {
                 cout << "重试" << endl;
-                ResetFlag=1;
+                ResetFlag = 1;
                 lcd_draw_img_jpeg(0, 0, "./img_resource/menu.jpg");
                 head.MouseReset();
-                //唤醒
+                // 唤醒
                 pthread_cond_signal(&Over_cond);
             }
+            if (y > 290 && y <= 340)
+            {
+                cout << "退出" << endl;
+                DestroyFlag = 1;
+                lcd_draw_img_jpeg(0, 0, "./img_resource/menu.jpg");
+                head.MouseDestroy();
+                return 0;
+                // 唤醒
+                pthread_cond_signal(&Over_cond);
+                // 等待线程自我回收
+                usleep(100 * 1000);
+            }
         }
+    }
+    else
+    {
+        return -1;
     }
 
 } // 游戏结束菜单选择

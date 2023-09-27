@@ -10,10 +10,11 @@ extern string sign;
 extern Mouse head;
 extern int GameOverFlag;
 extern int ResetFlag;
+extern int DestroyFlag;
 extern pthread_cond_t Over_cond;
 extern pthread_mutex_t Over_mutex;
-
+extern int speed;
 void Button_Direct(int x, int y); // 方向键判断
-void EndMenu(int x, int y);       // 游戏结束菜单选择
-
+int EndMenu(int x, int y);       // 游戏结束菜单选择
+int GameMenu(int x,int y);//游戏菜单选择
 #endif

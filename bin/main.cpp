@@ -9,4 +9,5 @@ int main(){
     inittouch_device(&fd_touch);
     menu();
     lcd_close();
+    return 0;
 }   

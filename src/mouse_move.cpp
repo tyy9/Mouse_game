@@ -1,16 +1,18 @@
 #include "mouse.h"
 // 全局变量
-int MouseCount;        // 鼠群的数量
-int CheeseCount;       // 奶酪的数量
-Mouse head;            // 鼠头
-string sign; // 指令
+int MouseCount;  // 鼠群的数量
+int CheeseCount; // 奶酪的数量
+Mouse head;      // 鼠头
+string sign;     // 指令
 vector<Mouse *> mouse_v;
 int GameOverFlag; // 游戏结束标志
 pthread_cond_t Over_cond;
 pthread_mutex_t Over_mutex;
 int ResetFlag;   // 重置标志
 int DestroyFlag; // 销毁标志
+int speed;//速度
 
+//----------------------------
 Mouse::Mouse(/* args */ int x, int y) : x(x), y(y)
 {
     next = prev = this;
@@ -63,6 +65,7 @@ void Mouse::MouseReset()
 {
     for (Mouse *m : mouse_v)
     {
+        cout << "Mouse------x:" << m->getX() << "\ty:" << m->getY() << "---deleted" << endl;
         delete m;
         mouse_v.clear();
     }
@@ -71,7 +74,16 @@ void Mouse::MouseReset()
     next = prev = this;
     sign = "below";
 }
-
+void Mouse::MouseDestroy()
+{
+    for (Mouse *m : mouse_v)
+    {
+        cout << "Mouse------x:" << m->getX() << "\ty:" << m->getY() << "---deleted" << endl;
+        delete m;
+        mouse_v.clear();
+    }
+    next=prev=NULL;
+}
 void Mouse::MouseTailAdd(Mouse *other)
 {
     // 先判断鼠头此时的朝向为？
@@ -141,13 +153,16 @@ void GameOver(Mouse *head)
         // 重新生成奶酪
         cheese.setExsit(0);
         cheese.CheeseCreate();
-        ResetFlag=0;
-        GameOverFlag=0;
-    }else if(DestroyFlag){
-
+        ResetFlag = 0;
+        GameOverFlag = 0;
+    }
+    else if (DestroyFlag)
+    {
+        pthread_exit(NULL);
     }
 
 } // 老鼠在撞墙后的处理函数
+
 void cleanMouse(Mouse *head)
 {
     Mouse *next = head->getNext();
@@ -251,6 +266,7 @@ void adjustMove(Mouse *head, int x, int y)
 }
 void *Mouse_autoMove(void *args)
 {
+    pthread_detach(pthread_self());
     Mouse *head = (Mouse *)args;
 
 #if 1
@@ -323,7 +339,7 @@ void *Mouse_autoMove(void *args)
             }
         }
 
-        usleep(500 * 1000);
+        usleep(speed * 1000);
     }
 #endif
 }

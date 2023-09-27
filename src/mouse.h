@@ -28,7 +28,8 @@ private:
 public:
     Mouse(/* args */ int x = 50, int y = 45);
     void MouseTailAdd(Mouse *other);
-    void MouseReset();//数据重置
+    void MouseReset();//数据重置  
+    void MouseDestroy();//数据销毁  
     void operator+(string sign);
     void show();
     void setX(int x);

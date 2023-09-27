@@ -5,7 +5,7 @@
 #include"lcd_jpeg.h"
 using namespace std;
 
-extern string sign;
+
 class Cheese
 {
 private:
