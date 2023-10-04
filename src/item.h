@@ -1,11 +1,10 @@
-#ifndef _CHEESE_H_
-#define _CHEESE_H_
-#include<iostream>
-#include"my_head.h"
+#ifndef _ITEM_H_
+#define _ITEM_H_
+#include <iostream>
+#include "my_head.h"
+#include <vector>
 #include"lcd_jpeg.h"
-
 using namespace std;
-
 class Cheese
 {
 private:
@@ -27,6 +26,31 @@ public:
     int getBouns();
     int getExsit();
     int getscore();
+    void show_lcd();
     ~Cheese();
 };
+
+class Trap
+{
+private:
+    /* data */
+    int x;
+    int y;
+
+public:
+    Trap();
+    ~Trap();
+    void setX(int x);
+    void setY(int y);
+    int getX();
+    int getY();
+    void show_lcd();
+};
+//-------------------
+extern Cheese cheese;
+extern vector<Trap *> Trap_v;
+extern int game_level;
+//----------------
+void LevelSelected(int level);//关卡选择与陷阱生成
+void TrapCreate();
 #endif

@@ -8,6 +8,7 @@ int fd_touch;
 int lcd_open()
 {
     fd_lcd = open("/dev/fb0", O_RDWR);
+    cout<<"fd_lcd:"<<fd_lcd<<endl;
     if (fd_lcd == -1)
     {
         perror("打开lcd失败\n");
@@ -47,6 +48,7 @@ int lcd_close(void)
 int inittouch_device(int *fd)
 {
     *fd = open("/dev/input/event0", O_RDONLY);
+    cout<<"touch:"<<*fd<<endl;
     if (fd < 0)
     {
         perror("触摸屏打开失败\n");

@@ -1,5 +1,5 @@
-#ifndef _MOUSE_H_
-#define _MOUSE_H_
+#ifndef _ANIMAL_H_
+#define _ANIMAL_H_
 #include <iostream>
 // #include"cheese.h"
 #include "lcd_jpeg.h"
@@ -45,12 +45,37 @@ public:
     void setPrev(Mouse *prev);
     ~Mouse();
 };
-
+extern Mouse head;      // 鼠头
+extern int PauseFlag;   // 暂停
+extern int GameOverFlag;
+//----------
  void *Mouse_autoMove(void *args);//老鼠自动行走
  void adjustMove(Mouse *head,int x,int y);//调整在移动时各节点的   
  void cleanMouse(Mouse *head);//老鼠在移动前的清除函数
  void GameOver(Mouse *head);//老鼠在撞墙后的处理函数
  void eatCheese(Mouse *head);//判断是否吃到奶酪
- void hitBody(Mouse *head);//身体碰撞判断
-
+ int    hitBody(Mouse *head);//身体碰撞判断
+//----------------------------------
+class Cat
+{
+private:
+    /* data */
+    int x;
+    int y;
+public:
+    Cat(/* args */int x=525,int y=425);
+    ~Cat();
+    void show();
+    void setX(int x);
+    void setY(int y);
+    int getX();
+    int getY();
+    void show_lcd(int direct);
+    void reset();
+};
+extern Cat cat;
+extern pthread_cond_t Cat_Pause_cond;
+extern pthread_mutex_t Cat_Pause_mutex;
+void *CatMove(void *args);
+void CatMove_adjust(int direct,Cat *cat);
 #endif
